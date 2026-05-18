@@ -61,13 +61,9 @@ export function useRegisterAndLogin() {
 
   return useMutation({
     mutationFn: async (credentials: RegisterRequest) => {
-      // First register
       await registerMutation.mutateAsync(credentials)
-
-      // Then login with same credentials
       const loginResponse = await loginMutation.mutateAsync(credentials)
       return loginResponse
     },
-    onSuccess: loginMutation.onSuccess,
   })
 }
