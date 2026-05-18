@@ -1,0 +1,130 @@
+services:
+
+  # ── PostgreSQL ────────────────────────────────────────────────────────────
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: traceveil
+      POSTGRES_PASSWORD: traceveil
+      POSTGRES_DB: traceveil
+    ports:
+      - "5434:5432"   # host:container — 5434 avoids conflicts with a local postgres
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U traceveil"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  # ── Redis ─────────────────────────────────────────────────────────────────
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  # ── FastAPI REST API ───────────────────────────────────────────────────────
+  api:
+    build:
+      context: services/api
+    environment:
+      DATABASE_URL: postgresql+asyncpg://traceveil:traceveil@postgres:5432/traceveil
+      REDIS_URL: redis://redis:6379/0
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY:-local-dev-secret-change-me}
+      JWT_ALGORITHM: HS256
+      JWT_ACCESS_TOKEN_EXPIRE_MINUTES: "15"
+      JWT_REFRESH_TOKEN_EXPIRE_DAYS: "7"
+      ENV: local
+      DEBUG: "true"
+      LOG_LEVEL: INFO
+      CORS_ORIGINS: "http://localhost:5173,http://localhost:3000"
+    ports:
+      - "8000:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    volumes:
+      # Mount source so --reload picks up changes without rebuilding the image.
+      - ./services/api:/app
+
+  # ── WebSocket Gateway ─────────────────────────────────────────────────────
+  websocket_gateway:
+    build:
+      context: services/websocket_gateway
+    environment:
+      DATABASE_URL: postgresql+asyncpg://traceveil:traceveil@postgres:5432/traceveil
+      REDIS_URL: redis://redis:6379/0
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY:-local-dev-secret-change-me}
+      JWT_ALGORITHM: HS256
+      LOG_LEVEL: INFO
+    ports:
+      - "8001:8001"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    volumes:
+      - ./services/websocket_gateway:/app
+
+  # ── Alert Service ─────────────────────────────────────────────────────────
+  alert_service:
+    build:
+      context: services/alert_service
+    environment:
+      DATABASE_URL: postgresql+asyncpg://traceveil:traceveil@postgres:5432/traceveil
+      REDIS_URL: redis://redis:6379/0
+      LOG_LEVEL: INFO
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    volumes:
+      - ./services/alert_service:/app
+
+  # ── Replay Engine ─────────────────────────────────────────────────────────
+  replay_engine:
+    build:
+      context: services/replay_engine
+    environment:
+      DATABASE_URL: postgresql+asyncpg://traceveil:traceveil@postgres:5432/traceveil
+      REDIS_URL: redis://redis:6379/0
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY:-local-dev-secret-change-me}
+      JWT_ALGORITHM: HS256
+      LOG_LEVEL: INFO
+    ports:
+      - "8002:8002"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    volumes:
+      - ./services/replay_engine:/app
+
+  # ── Celery Worker (Simulation Engine) ─────────────────────────────────────
+  simulation_engine:
+    build:
+      context: services/simulation_engine
+    environment:
+      DATABASE_URL: postgresql+asyncpg://traceveil:traceveil@postgres:5432/traceveil
+      REDIS_URL: redis://redis:6379/0
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    volumes:
+      # Mount source so code changes are reflected without rebuilding.
+      - ./services/simulation_engine:/app
+
+volumes:
+  postgres_data:
