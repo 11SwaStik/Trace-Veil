@@ -1,0 +1,3 @@
+services/api/.env
+services/simulation_engine/__pycache__
+
