@@ -1,0 +1,16 @@
+# --- Web framework ---
+fastapi==0.115.5
+uvicorn[standard]==0.32.1
+
+# --- Redis (async pub/sub + command publishing) ---
+redis==5.2.1
+
+# --- JWT validation ---
+python-jose[cryptography]==3.3.0
+
+# --- Database (topology query on connect) ---
+sqlalchemy[asyncio]==2.0.36
+asyncpg==0.30.0
+
+# --- Config ---
+python-dotenv==1.0.1
