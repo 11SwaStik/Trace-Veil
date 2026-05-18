@@ -5,66 +5,13 @@ import { useAuthStore } from './store/authStore'
 import { ApiTestPage } from './pages/ApiTestPage'
 import { LoginPage } from './features/auth/LoginPage'
 import { RegisterPage } from './features/auth/RegisterPage'
-
-function DashboardPage() {
-  const { user, logout } = useAuthStore()
-
-  return (
-    <div className="min-h-screen bg-[#0a0a0f]">
-      {/* Header */}
-      <div className="bg-[#131318] border-b border-[#262630] px-6 py-4">
-        <div className="flex items-center justify-between max-w-7xl mx-auto">
-          <h1 className="text-2xl font-bold text-[#e0e0e0]">TraceVeil</h1>
-          <div className="flex items-center gap-4">
-            <span className="text-[#888899]">{user?.email}</span>
-            <button
-              onClick={() => {
-                logout()
-                window.location.href = '/login'
-              }}
-              className="px-4 py-2 bg-[#ef4444] hover:bg-[#dc2626] text-white rounded text-sm transition-colors"
-            >
-              Logout
-            </button>
-          </div>
-        </div>
-      </div>
-
-      {/* Content */}
-      <div className="max-w-7xl mx-auto px-6 py-12">
-        <h2 className="text-3xl font-bold text-[#e0e0e0] mb-4">Welcome back, {user?.email}!</h2>
-        <p className="text-[#888899] mb-8">This is the dashboard. More features coming in Phase 4!</p>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="bg-[#131318] border border-[#262630] rounded-lg p-6">
-            <h3 className="text-lg font-semibold text-[#e0e0e0] mb-2">Simulations</h3>
-            <p className="text-[#888899]">Create and run attack simulations</p>
-          </div>
-          <div className="bg-[#131318] border border-[#262630] rounded-lg p-6">
-            <h3 className="text-lg font-semibold text-[#e0e0e0] mb-2">Replays</h3>
-            <p className="text-[#888899]">Review past simulations</p>
-          </div>
-        </div>
-
-        <div className="mt-8">
-          <Link to="/api-test" className="text-[#00d9ff] hover:underline text-sm">
-            → API Test Page
-          </Link>
-        </div>
-      </div>
-    </div>
-  )
-}
-
-function ProtectedRoute({ children }: { children: React.ReactNode }) {
-  const { isAuthenticated } = useAuthStore()
-
-  if (!isAuthenticated) {
-    return <Navigate to="/login" replace />
-  }
-
-  return <>{children}</>
-}
+import { DashboardPage } from './features/dashboard/DashboardPage'
+import { SimulationViewPage } from './features/simulation/SimulationViewPage'
+import { SimulationHistoryPage } from './features/history/SimulationHistoryPage'
+import { AlertsPage } from './features/alerts/AlertsPage'
+import { ReplayViewerPage } from './features/replay/ReplayViewerPage'
+import { AppLayout } from './components/Layout/AppLayout'
+import { ProtectedRoute } from './components/Layout/ProtectedRoute'
 
 function HomePage() {
   return (
@@ -137,15 +84,58 @@ function App() {
         <Route path="/login" element={isAuthenticated ? <Navigate to="/dashboard" replace /> : <LoginPage />} />
         <Route path="/register" element={isAuthenticated ? <Navigate to="/dashboard" replace /> : <RegisterPage />} />
 
-        {/* Protected routes */}
+        {/* Protected routes with layout */}
         <Route
           path="/dashboard"
           element={
             <ProtectedRoute>
-              <DashboardPage />
+              <AppLayout>
+                <DashboardPage />
+              </AppLayout>
             </ProtectedRoute>
           }
         />
+        <Route
+          path="/simulation/:id"
+          element={
+            <ProtectedRoute>
+              <AppLayout>
+                <SimulationViewPage />
+              </AppLayout>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/history"
+          element={
+            <ProtectedRoute>
+              <AppLayout>
+                <SimulationHistoryPage />
+              </AppLayout>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/alerts"
+          element={
+            <ProtectedRoute>
+              <AppLayout>
+                <AlertsPage />
+              </AppLayout>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/replay/:id"
+          element={
+            <ProtectedRoute>
+              <AppLayout>
+                <ReplayViewerPage />
+              </AppLayout>
+            </ProtectedRoute>
+          }
+        />
+
         <Route path="/api-test" element={<ApiTestPage />} />
 
         {/* 404 */}
