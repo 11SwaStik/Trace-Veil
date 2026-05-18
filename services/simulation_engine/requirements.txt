@@ -1,0 +1,12 @@
+# --- Task queue ---
+celery[redis]==5.4.0
+
+# --- Async Redis (publish + pubsub) ---
+redis==5.2.1
+
+# --- Database ---
+sqlalchemy[asyncio]==2.0.36
+asyncpg==0.30.0
+
+# --- Config ---
+python-dotenv==1.0.1
