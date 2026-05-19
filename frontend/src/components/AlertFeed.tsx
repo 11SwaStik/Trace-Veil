@@ -37,7 +37,7 @@ export function AlertFeed({ alerts, onAcknowledge, nodeLabels = {}, isAcknowledg
         </div>
       )}
 
-      <div className="flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-[#262630] scrollbar-track-transparent">
+      <div className="flex-1 overflow-y-auto">
         <AnimatePresence mode="popLayout">
           {sortedAlerts.map((alert, index) => {
             const severityStyle = severityConfig[alert.severity] || severityConfig.MEDIUM

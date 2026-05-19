@@ -40,7 +40,7 @@ export function EventTimeline({ events, currentSequence, onEventClick, nodeLabel
 
   return (
     <div className="flex flex-col h-full">
-      <div className="flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-[#262630] scrollbar-track-transparent">
+      <div className="flex-1 overflow-y-auto">
         <AnimatePresence mode="popLayout">
           {sortedEvents.map((event, index) => {
             const eventConfig = eventTypeConfig[event.event_type] || { label: event.event_type, color: 'bg-gray-600' }
