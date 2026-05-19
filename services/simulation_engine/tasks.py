@@ -93,7 +93,7 @@ async def _run(simulation_id: str) -> None:
             await session.execute(
                 text("""
                     UPDATE simulations
-                    SET topology   = :topology::jsonb,
+                    SET topology   = CAST(:topology AS jsonb),
                         status     = 'RUNNING',
                         started_at = :now
                     WHERE id = :id
