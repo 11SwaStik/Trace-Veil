@@ -57,3 +57,28 @@ export interface CreateSimulationRequest {
 }
 
 export interface CreateSimulationResponse extends Simulation {}
+
+export interface SimulationEvent {
+  id: string
+  simulation_id: string
+  sequence_number: number
+  event_type: 'RECON' | 'INITIAL_ACCESS' | 'EXECUTION' | 'LATERAL_MOVEMENT' | 'PERSISTENCE' | 'PRIVILEGE_ESCALATION' | 'CREDENTIAL_ACCESS' | 'COLLECTION' | 'EXFILTRATION'
+  severity: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL'
+  source_node_id: string
+  target_node_id: string
+  ttp_id: string
+  payload?: Record<string, unknown>
+  fired_at: string
+}
+
+export interface Alert {
+  id: string
+  simulation_id: string
+  event_id: string
+  rule_id: string
+  severity: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL'
+  title: string
+  affected_node_id: string
+  created_at: string
+  acknowledged: boolean
+}
