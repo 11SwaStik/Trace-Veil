@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { useGetSimulations } from './useSimulations'
-import { ScenarioPickerModal } from './ScenarioPickerModal'
+import { useGetSimulations, useCreateSimulation, useStartSimulation } from './useSimulations'
+import { ScenarioPickerDialog } from '../../components/Dialogs/ScenarioPickerDialog'
 import type { SimulationStatus } from '../../types/simulation'
 
 const statusConfig: Record<SimulationStatus, { color: string; bgColor: string }> = {
@@ -15,7 +15,10 @@ const statusConfig: Record<SimulationStatus, { color: string; bgColor: string }>
 export function DashboardPage() {
   const navigate = useNavigate()
   const { data: simulations, isLoading, error } = useGetSimulations()
-  const [isModalOpen, setIsModalOpen] = useState(false)
+  const createSimulation = useCreateSimulation()
+  const startSimulation = useStartSimulation()
+  const [isDialogOpen, setIsDialogOpen] = useState(false)
+  const [isLaunching, setIsLaunching] = useState(false)
 
   const formatDate = (dateString: string | null) => {
     if (!dateString) return '—'
@@ -41,6 +44,22 @@ export function DashboardPage() {
     return `${seconds}s`
   }
 
+  const handleScenarioSelect = async (data: { scenario_id: string; attack_speed: number }) => {
+    try {
+      setIsLaunching(true)
+
+      const simulation = await createSimulation.mutateAsync(data)
+      await startSimulation.mutateAsync(simulation.id)
+
+      setIsDialogOpen(false)
+      navigate(`/simulation/${simulation.id}`)
+    } catch (error) {
+      console.error('Failed to launch simulation:', error)
+    } finally {
+      setIsLaunching(false)
+    }
+  }
+
   return (
     <div>
       <div className="flex items-center justify-between mb-8">
@@ -49,7 +68,7 @@ export function DashboardPage() {
           <p className="text-[#888899] mt-2">Manage your attack simulations</p>
         </div>
         <button
-          onClick={() => setIsModalOpen(true)}
+          onClick={() => setIsDialogOpen(true)}
           className="px-6 py-2 bg-[#1e40af] text-white rounded hover:bg-[#1e3a8a] transition-colors font-medium"
         >
           + New Simulation
@@ -116,7 +135,7 @@ export function DashboardPage() {
           <div className="p-8 text-center">
             <p className="text-[#888899] mb-4">No simulations yet</p>
             <button
-              onClick={() => setIsModalOpen(true)}
+              onClick={() => setIsDialogOpen(true)}
               className="inline-block px-4 py-2 bg-[#1e40af] text-white rounded hover:bg-[#1e3a8a] transition-colors text-sm font-medium"
             >
               Launch Your First Simulation
@@ -125,8 +144,13 @@ export function DashboardPage() {
         )}
       </div>
 
-      {/* Scenario Picker Modal */}
-      <ScenarioPickerModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
+      {/* Scenario Picker Dialog */}
+      <ScenarioPickerDialog
+        isOpen={isDialogOpen}
+        onClose={() => setIsDialogOpen(false)}
+        onSelect={handleScenarioSelect}
+        isLoading={isLaunching}
+      />
     </div>
   )
 }
