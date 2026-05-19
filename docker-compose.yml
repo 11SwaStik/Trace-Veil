@@ -1,6 +1,10 @@
 services:
 
   # ── PostgreSQL ────────────────────────────────────────────────────────────
+  # Port mapping: 5434 (host) → 5432 (container)
+  # This avoids conflicts if you have PostgreSQL running locally on port 5432.
+  # From the host machine: connect to localhost:5434
+  # From inside containers: connect to postgres:5432 (internal Docker network DNS)
   postgres:
     image: postgres:16-alpine
     environment:
