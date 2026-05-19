@@ -71,7 +71,7 @@ export function ReplayViewerPage() {
   const nodeLabels = useMemo(() => {
     if (!topology) return {}
     return topology.nodes.reduce(
-      (acc, node) => {
+      (acc: Record<string, string>, node: any) => {
         acc[node.id] = node.label
         return acc
       },

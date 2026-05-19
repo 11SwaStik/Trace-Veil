@@ -39,7 +39,7 @@ export function useTopologyLayout(
         x: nodeWithPosition.x - 60,
         y: nodeWithPosition.y - 60,
       },
-      type: getNodeType(node.type),
+      type: getNodeType(),
     }
   })
 
@@ -57,16 +57,6 @@ export function useTopologyLayout(
   return { nodes: layoutedNodes, edges: layoutedEdges }
 }
 
-function getNodeType(nodeType: string): string {
-  const typeMap: Record<string, string> = {
-    ATTACKER: 'attacker-node',
-    WORKSTATION: 'workstation-node',
-    SERVER: 'server-node',
-    DATABASE: 'database-node',
-    DOMAIN_CONTROLLER: 'server-node',
-    FIREWALL: 'firewall-node',
-    MAIL_SERVER: 'server-node',
-    JUMP_SERVER: 'server-node',
-  }
-  return typeMap[nodeType] || 'server-node'
+function getNodeType(): string {
+  return 'infra-node'
 }

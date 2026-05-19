@@ -1,15 +1,14 @@
 import { useEffect, useRef } from 'react'
-import { BaseEdge, getSmoothStepPath, Position, type EdgeProps } from '@xyflow/react'
+import { getSmoothStepPath, Position, type EdgeProps } from '@xyflow/react'
 import gsap from 'gsap'
-import MotionPathPlugin from 'gsap/MotionPathPlugin'
+import type { EdgeState } from '../../../types/simulation'
 
-gsap.registerPlugin(MotionPathPlugin)
-
-const severityConfig: Record<string, string> = {
-  LOW: '#3b82f6',
-  MEDIUM: '#eab308',
-  HIGH: '#f97316',
-  CRITICAL: '#ef4444',
+const EDGE_STYLE: Record<EdgeState, { stroke: string; width: number; dash: number }> = {
+  rest: { stroke: '#989CA4', width: 1, dash: 0 },
+  attacked: { stroke: '#3DDBD9', width: 2, dash: 0 },
+  c2: { stroke: '#B57BD3', width: 1.5, dash: 4 },
+  exfil: { stroke: '#B57BD3', width: 2, dash: 0 },
+  dim: { stroke: '#686C75', width: 1, dash: 2 },
 }
 
 export function AnimatedEdge({
@@ -19,11 +18,11 @@ export function AnimatedEdge({
   targetY,
   data = {},
 }: EdgeProps) {
-  const svgRef = useRef<SVGSVGElement>(null)
-  const dotRef = useRef<SVGCircleElement>(null)
-  const animationRef = useRef<gsap.core.Tween | null>(null)
+  const pathRef = useRef<SVGPathElement>(null)
 
-  const edgeData = data as { severity?: string; isAnimating?: boolean } | undefined
+  const edgeData = data as { edgeState?: EdgeState; protocol?: string } | undefined
+  const edgeState = edgeData?.edgeState || 'rest'
+  const style = EDGE_STYLE[edgeState]
 
   const [edgePath] = getSmoothStepPath({
     sourceX,
@@ -35,51 +34,19 @@ export function AnimatedEdge({
   })
 
   useEffect(() => {
-    if (!edgeData?.isAnimating || !svgRef.current || !dotRef.current) {
-      // Kill animation if not animating anymore
-      if (animationRef.current) {
-        animationRef.current.kill()
-        animationRef.current = null
-      }
-      return
-    }
+    if (!pathRef.current) return
 
-    const duration = 1.5
-
-    // Create SVG path element for motion path animation
-    const pathElement = svgRef.current.querySelector('path')
-    if (!pathElement) return
-
-    // Kill previous animation
-    if (animationRef.current) {
-      animationRef.current.kill()
-    }
-
-    // Animate the dot along the path
-    animationRef.current = gsap.to(dotRef.current, {
-      duration,
-      motionPath: {
-        path: pathElement,
-        align: pathElement,
-        alignOrigin: [0.5, 0.5],
-      },
-      ease: 'linear',
-      repeat: -1,
+    gsap.to(pathRef.current, {
+      strokeWidth: style.width,
+      strokeDasharray: style.dash,
+      stroke: style.stroke,
+      duration: 0.3,
+      ease: 'power2.out',
     })
-
-    return () => {
-      if (animationRef.current) {
-        animationRef.current.kill()
-      }
-    }
-  }, [edgeData?.isAnimating, edgeData?.severity])
-
-  const severity = edgeData?.severity || 'HIGH'
-  const color = severityConfig[severity] || '#f97316'
+  }, [edgeState, style])
 
   return (
     <svg
-      ref={svgRef}
       style={{
         position: 'absolute',
         width: '100%',
@@ -89,25 +56,16 @@ export function AnimatedEdge({
         pointerEvents: 'none',
       }}
     >
-      <defs>
-        <filter id={`glow-${severity}`}>
-          <feGaussianBlur stdDeviation="3" result="coloredBlur" />
-          <feMerge>
-            <feMergeNode in="coloredBlur" />
-            <feMergeNode in="SourceGraphic" />
-          </feMerge>
-        </filter>
-      </defs>
-      <BaseEdge path={edgePath} markerEnd="url(#react-flow__arrowclosed)" />
-      {edgeData?.isAnimating ? (
-        <circle
-          ref={dotRef}
-          r="6"
-          fill={color}
-          filter={`url(#glow-${severity})`}
-          opacity={0.9}
-        />
-      ) : null}
+      <path
+        ref={pathRef}
+        d={edgePath}
+        fill="none"
+        stroke={style.stroke}
+        strokeWidth={style.width}
+        strokeDasharray={style.dash}
+        className={edgeState === 'c2' ? 'edge-c2' : ''}
+        style={{ transition: 'stroke 0.3s ease' }}
+      />
     </svg>
   )
 }

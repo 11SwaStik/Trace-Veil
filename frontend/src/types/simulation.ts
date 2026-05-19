@@ -1,3 +1,120 @@
+/* ============================================================
+   OPERATOR DESIGN SYSTEM TYPES
+   ============================================================ */
+
+export type NodeState =
+  | 'healthy'
+  | 'scanned'
+  | 'targeted'
+  | 'compromising'
+  | 'compromised'
+  | 'exfiltrating'
+  | 'c2_beaconing'
+  | 'isolated'
+
+export type EdgeState = 'rest' | 'attacked' | 'c2' | 'exfil' | 'dim'
+
+export type EventType =
+  | 'RECON'
+  | 'INITIAL_ACCESS'
+  | 'EXECUTION'
+  | 'LATERAL_MOVEMENT'
+  | 'PERSISTENCE'
+  | 'PRIVILEGE_ESCALATION'
+  | 'CREDENTIAL_ACCESS'
+  | 'COLLECTION'
+  | 'EXFILTRATION'
+
+export type Severity = 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL'
+
+export const STATE_RING: Record<NodeState, { stroke: string; width: number; dash: number }> = {
+  healthy: { stroke: '#3DDBD9', width: 0, dash: 0 },
+  scanned: { stroke: '#3DDBD9', width: 1.5, dash: 4 },
+  targeted: { stroke: '#E0A663', width: 2, dash: 0 },
+  compromising: { stroke: '#E0A663', width: 2.5, dash: 0 },
+  compromised: { stroke: '#E5484D', width: 2, dash: 0 },
+  exfiltrating: { stroke: '#B57BD3', width: 2, dash: 0 },
+  c2_beaconing: { stroke: '#B57BD3', width: 1.5, dash: 4 },
+  isolated: { stroke: '#989CA4', width: 1.5, dash: 2 },
+}
+
+export const STATE_FILL: Record<NodeState, string> = {
+  healthy: '#0A0C10',
+  scanned: '#0A0C10',
+  targeted: '#0A0C10',
+  compromising: 'rgba(224, 166, 99, 0.15)',
+  compromised: 'rgba(229, 72, 77, 0.15)',
+  exfiltrating: 'rgba(181, 123, 211, 0.15)',
+  c2_beaconing: 'rgba(181, 123, 211, 0.1)',
+  isolated: 'rgba(152, 156, 164, 0.08)',
+}
+
+export const STATUS_TO_STATE: Record<string, NodeState> = {
+  CLEAN: 'healthy',
+  COMPROMISED: 'compromised',
+  ELEVATED: 'compromised',
+  EXFILTRATING: 'exfiltrating',
+}
+
+export const EVENT_TO_PACKET: Record<EventType, { color: string; ease: string }> = {
+  RECON: { color: '#6EA8FE', ease: 'power1.inOut' },
+  INITIAL_ACCESS: { color: '#3DDBD9', ease: 'power1.inOut' },
+  EXECUTION: { color: '#3DDBD9', ease: 'power1.inOut' },
+  LATERAL_MOVEMENT: { color: '#3DDBD9', ease: 'power1.inOut' },
+  PERSISTENCE: { color: '#E0A663', ease: 'power1.inOut' },
+  PRIVILEGE_ESCALATION: { color: '#E0A663', ease: 'power1.inOut' },
+  CREDENTIAL_ACCESS: { color: '#E5484D', ease: 'power1.inOut' },
+  COLLECTION: { color: '#B57BD3', ease: 'power1.inOut' },
+  EXFILTRATION: { color: '#B57BD3', ease: 'power1.inOut' },
+}
+
+export const NODE_ZONE: Record<string, 'perimeter' | 'app' | 'data'> = {
+  ATTACKER: 'perimeter',
+  FIREWALL: 'perimeter',
+  WORKSTATION: 'app',
+  MAIL_SERVER: 'app',
+  JUMP_SERVER: 'app',
+  SERVER: 'app',
+  DOMAIN_CONTROLLER: 'data',
+  DATABASE: 'data',
+}
+
+export interface SimNode {
+  id: string
+  type: string
+  label: string
+  ip: string
+  status: string
+  state: NodeState
+  zone: 'perimeter' | 'app' | 'data'
+  eventCount: number
+  lastTtp?: string
+  lastSeen?: string
+}
+
+export interface SimEdge {
+  id: string
+  source: string
+  target: string
+  protocol: string
+  edgeState: EdgeState
+}
+
+export type SimEvent = SimulationEvent & {
+  event_id?: string
+  description?: string
+  timestamp?: string
+}
+
+export type SimAlert = Alert & {
+  alert_id?: string
+  rule_name?: string
+}
+
+/* ============================================================
+   BACKEND API TYPES
+   ============================================================ */
+
 export type SimulationStatus = 'INITIALIZING' | 'RUNNING' | 'PAUSED' | 'COMPLETED' | 'STOPPED'
 
 export interface SimulationNode {

@@ -16,56 +16,74 @@ import { ProtectedRoute } from './components/Layout/ProtectedRoute'
 
 function HomePage() {
   return (
-    <div className="min-h-screen bg-[#0a0a0f] flex items-center justify-center">
-      <div className="text-center">
-        <h1 className="text-5xl font-bold text-[#e0e0e0] mb-4">TraceVeil</h1>
-        <p className="text-[#888899] text-lg mb-8">Cybersecurity Simulation Platform</p>
+    <div style={{ minHeight: '100vh', background: 'var(--bg-0)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <div style={{ textAlign: 'center' }}>
+        <h1 style={{ fontSize: '3rem', fontWeight: 'bold', color: 'var(--ink-1)', marginBottom: '1rem' }}>TraceVeil</h1>
+        <p style={{ color: 'var(--ink-2)', fontSize: '1.125rem', marginBottom: '2rem' }}>Cybersecurity Simulation Platform</p>
 
-        <div className="grid grid-cols-4 gap-4 max-w-2xl mb-12">
-          <div className="bg-[#131318] border border-[#262630] rounded-lg p-6">
-            <div className="w-12 h-12 rounded-full bg-[#22c55e] mb-4 mx-auto"></div>
-            <p className="text-sm text-[#888899]">CLEAN</p>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1rem', maxWidth: '56rem', marginBottom: '3rem' }}>
+          <div style={{ background: 'var(--bg-2)', border: '1px solid var(--line-1)', borderRadius: '0.5rem', padding: '1.5rem' }}>
+            <div style={{ width: '3rem', height: '3rem', borderRadius: '50%', background: '#22c55e', margin: '0 auto 1rem' }}></div>
+            <p style={{ fontSize: '0.875rem', color: 'var(--ink-2)' }}>CLEAN</p>
           </div>
-
-          <div className="bg-[#131318] border border-[#262630] rounded-lg p-6">
-            <div className="w-12 h-12 rounded-full bg-[#ef4444] mb-4 mx-auto"></div>
-            <p className="text-sm text-[#888899]">COMPROMISED</p>
+          <div style={{ background: 'var(--bg-2)', border: '1px solid var(--line-1)', borderRadius: '0.5rem', padding: '1.5rem' }}>
+            <div style={{ width: '3rem', height: '3rem', borderRadius: '50%', background: '#ef4444', margin: '0 auto 1rem' }}></div>
+            <p style={{ fontSize: '0.875rem', color: 'var(--ink-2)' }}>COMPROMISED</p>
           </div>
-
-          <div className="bg-[#131318] border border-[#262630] rounded-lg p-6">
-            <div className="w-12 h-12 rounded-full bg-[#f97316] mb-4 mx-auto"></div>
-            <p className="text-sm text-[#888899]">ELEVATED</p>
+          <div style={{ background: 'var(--bg-2)', border: '1px solid var(--line-1)', borderRadius: '0.5rem', padding: '1.5rem' }}>
+            <div style={{ width: '3rem', height: '3rem', borderRadius: '50%', background: '#f97316', margin: '0 auto 1rem' }}></div>
+            <p style={{ fontSize: '0.875rem', color: 'var(--ink-2)' }}>ELEVATED</p>
           </div>
-
-          <div className="bg-[#131318] border border-[#262630] rounded-lg p-6">
-            <div className="w-12 h-12 rounded-full bg-[#a855f7] mb-4 mx-auto"></div>
-            <p className="text-sm text-[#888899]">EXFILTRATING</p>
+          <div style={{ background: 'var(--bg-2)', border: '1px solid var(--line-1)', borderRadius: '0.5rem', padding: '1.5rem' }}>
+            <div style={{ width: '3rem', height: '3rem', borderRadius: '50%', background: '#a855f7', margin: '0 auto 1rem' }}></div>
+            <p style={{ fontSize: '0.875rem', color: 'var(--ink-2)' }}>EXFILTRATING</p>
           </div>
         </div>
 
-        <div className="flex justify-center gap-4 mb-6">
+        <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem', marginBottom: '1.5rem' }}>
           <Link
             to="/login"
-            className="px-6 py-2 bg-[#1e40af] text-white rounded hover:bg-[#1e3a8a] transition-colors inline-block"
+            style={{
+              padding: '0.5rem 1.5rem',
+              background: '#1e40af',
+              color: 'white',
+              borderRadius: '0.375rem',
+              textDecoration: 'none',
+              display: 'inline-block',
+              transition: 'background-color 0.2s'
+            }}
+            onMouseEnter={(e) => (e.currentTarget.style.background = '#1e3a8a')}
+            onMouseLeave={(e) => (e.currentTarget.style.background = '#1e40af')}
           >
             Login
           </Link>
           <Link
             to="/register"
-            className="px-6 py-2 bg-[#00d9ff] text-[#0a0a0f] rounded hover:bg-[#00c2ff] transition-colors font-medium inline-block"
+            style={{
+              padding: '0.5rem 1.5rem',
+              background: 'var(--attack)',
+              color: 'var(--bg-0)',
+              borderRadius: '0.375rem',
+              textDecoration: 'none',
+              fontWeight: 500,
+              display: 'inline-block',
+              transition: 'background-color 0.2s'
+            }}
+            onMouseEnter={(e) => (e.currentTarget.style.background = '#00c2ff')}
+            onMouseLeave={(e) => (e.currentTarget.style.background = 'var(--attack)')}
           >
             Get Started
           </Link>
         </div>
 
-        <div className="flex justify-center gap-3 text-sm">
-          <Link to="/api-test" className="text-[#00d9ff] hover:underline">
+        <div style={{ display: 'flex', justifyContent: 'center', gap: '0.75rem', fontSize: '0.875rem' }}>
+          <Link to="/api-test" style={{ color: 'var(--attack)', textDecoration: 'none' }}>
             API Test
           </Link>
         </div>
 
-        <p className="text-[#595963] text-xs mt-12">
-          Frontend initialized with dark theme • Ready for Phase 1
+        <p style={{ color: 'var(--ink-4)', fontSize: '0.75rem', marginTop: '3rem' }}>
+          Frontend initialized with Operator design system • Phase 1: Tokens + Shell Layout
         </p>
       </div>
     </div>
@@ -87,65 +105,19 @@ function App() {
 
         {/* Protected routes with layout */}
         <Route
-          path="/dashboard"
           element={
             <ProtectedRoute>
-              <AppLayout>
-                <DashboardPage />
-              </AppLayout>
+              <AppLayout />
             </ProtectedRoute>
           }
-        />
-        <Route
-          path="/simulation/:id"
-          element={
-            <ProtectedRoute>
-              <AppLayout>
-                <SimulationViewPage />
-              </AppLayout>
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/history"
-          element={
-            <ProtectedRoute>
-              <AppLayout>
-                <SimulationHistoryPage />
-              </AppLayout>
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/alerts"
-          element={
-            <ProtectedRoute>
-              <AppLayout>
-                <AlertsPage />
-              </AppLayout>
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/replays"
-          element={
-            <ProtectedRoute>
-              <AppLayout>
-                <ReplayLibraryPage />
-              </AppLayout>
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/replay/:id"
-          element={
-            <ProtectedRoute>
-              <AppLayout>
-                <ReplayViewerPage />
-              </AppLayout>
-            </ProtectedRoute>
-          }
-        />
+        >
+          <Route path="/dashboard" element={<DashboardPage />} />
+          <Route path="/simulation/:id" element={<SimulationViewPage />} />
+          <Route path="/history" element={<SimulationHistoryPage />} />
+          <Route path="/alerts" element={<AlertsPage />} />
+          <Route path="/replays" element={<ReplayLibraryPage />} />
+          <Route path="/replay/:id" element={<ReplayViewerPage />} />
+        </Route>
 
         <Route path="/api-test" element={<ApiTestPage />} />
 
