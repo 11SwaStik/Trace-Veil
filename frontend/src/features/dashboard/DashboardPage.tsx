@@ -1,30 +1,132 @@
+import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { useGetSimulations } from './useSimulations'
+import { ScenarioPickerModal } from './ScenarioPickerModal'
+import type { SimulationStatus } from '../../types/simulation'
+
+const statusConfig: Record<SimulationStatus, { color: string; bgColor: string }> = {
+  INITIALIZING: { color: '#888899', bgColor: '#888899/10' },
+  RUNNING: { color: '#3b82f6', bgColor: '#3b82f6/10' },
+  PAUSED: { color: '#eab308', bgColor: '#eab308/10' },
+  COMPLETED: { color: '#22c55e', bgColor: '#22c55e/10' },
+  STOPPED: { color: '#ef4444', bgColor: '#ef4444/10' },
+}
+
 export function DashboardPage() {
+  const navigate = useNavigate()
+  const { data: simulations, isLoading, error } = useGetSimulations()
+  const [isModalOpen, setIsModalOpen] = useState(false)
+
+  const formatDate = (dateString: string | null) => {
+    if (!dateString) return '—'
+    return new Date(dateString).toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      year: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+    })
+  }
+
+  const formatDuration = (startedAt: string | null, completedAt: string | null) => {
+    if (!startedAt || !completedAt) return '—'
+    const start = new Date(startedAt).getTime()
+    const end = new Date(completedAt).getTime()
+    const seconds = Math.floor((end - start) / 1000)
+    const minutes = Math.floor(seconds / 60)
+    const hours = Math.floor(minutes / 60)
+
+    if (hours > 0) return `${hours}h ${minutes % 60}m`
+    if (minutes > 0) return `${minutes}m ${seconds % 60}s`
+    return `${seconds}s`
+  }
+
   return (
     <div>
-      <h1 className="text-4xl font-bold text-[#e0e0e0] mb-4">Dashboard</h1>
-      <p className="text-[#888899] mb-8">Welcome to TraceVeil. This is your dashboard.</p>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-        <div className="bg-[#131318] border border-[#262630] rounded-lg p-6 hover:border-[#1e40af] transition-colors cursor-pointer">
-          <h2 className="text-lg font-semibold text-[#e0e0e0] mb-2">Recent Simulations</h2>
-          <p className="text-[#888899]">View and manage your attack simulations</p>
+      <div className="flex items-center justify-between mb-8">
+        <div>
+          <h1 className="text-4xl font-bold text-[#e0e0e0]">Dashboard</h1>
+          <p className="text-[#888899] mt-2">Manage your attack simulations</p>
         </div>
-        <div className="bg-[#131318] border border-[#262630] rounded-lg p-6 hover:border-[#1e40af] transition-colors cursor-pointer">
-          <h2 className="text-lg font-semibold text-[#e0e0e0] mb-2">New Simulation</h2>
-          <p className="text-[#888899]">Create a new attack scenario simulation</p>
-        </div>
+        <button
+          onClick={() => setIsModalOpen(true)}
+          className="px-6 py-2 bg-[#1e40af] text-white rounded hover:bg-[#1e3a8a] transition-colors font-medium"
+        >
+          + New Simulation
+        </button>
       </div>
 
-      <div className="bg-[#131318] border border-[#262630] rounded-lg p-6">
-        <h2 className="text-lg font-semibold text-[#e0e0e0] mb-4">Getting Started</h2>
-        <ul className="text-[#888899] space-y-2">
-          <li>✓ Phase 3 complete: Routing and layout</li>
-          <li>→ Phase 4 coming: Simulation list and scenario picker</li>
-          <li>→ Create and launch attack simulations</li>
-          <li>→ Watch live network visualization</li>
-          <li>→ Replay and analyze completed incidents</li>
-        </ul>
+      {/* Error State */}
+      {error && (
+        <div className="mb-6 p-4 bg-[#ef4444]/10 border border-[#ef4444] rounded text-[#ef4444] text-sm">
+          Failed to load simulations. Please try again.
+        </div>
+      )}
+
+      {/* Simulations Table */}
+      <div className="bg-[#131318] border border-[#262630] rounded-lg overflow-hidden">
+        {isLoading ? (
+          <div className="p-8">
+            <div className="space-y-3">
+              {[...Array(3)].map((_, i) => (
+                <div key={i} className="h-12 bg-[#1a1a20] rounded animate-pulse" />
+              ))}
+            </div>
+          </div>
+        ) : simulations && simulations.length > 0 ? (
+          <table className="w-full">
+            <thead className="border-b border-[#262630] bg-[#0a0a0f]">
+              <tr>
+                <th className="text-left px-6 py-4 text-sm font-semibold text-[#e0e0e0]">Scenario</th>
+                <th className="text-left px-6 py-4 text-sm font-semibold text-[#e0e0e0]">Status</th>
+                <th className="text-left px-6 py-4 text-sm font-semibold text-[#e0e0e0]">Speed</th>
+                <th className="text-left px-6 py-4 text-sm font-semibold text-[#e0e0e0]">Started</th>
+                <th className="text-left px-6 py-4 text-sm font-semibold text-[#e0e0e0]">Duration</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-[#262630]">
+              {simulations.map((sim) => {
+                const config = statusConfig[sim.status]
+                return (
+                  <tr
+                    key={sim.id}
+                    onClick={() => navigate(`/simulation/${sim.id}`)}
+                    className="hover:bg-[#1a1a20] cursor-pointer transition-colors"
+                  >
+                    <td className="px-6 py-4 text-sm text-[#e0e0e0]">{sim.scenario_id}</td>
+                    <td className="px-6 py-4">
+                      <span
+                        className="inline-block px-3 py-1 rounded-full text-xs font-medium"
+                        style={{ color: config.color, backgroundColor: config.bgColor }}
+                      >
+                        {sim.status}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 text-sm text-[#e0e0e0]">{sim.attack_speed}x</td>
+                    <td className="px-6 py-4 text-sm text-[#888899]">{formatDate(sim.started_at)}</td>
+                    <td className="px-6 py-4 text-sm text-[#888899]">
+                      {formatDuration(sim.started_at, sim.completed_at)}
+                    </td>
+                  </tr>
+                )
+              })}
+            </tbody>
+          </table>
+        ) : (
+          <div className="p-8 text-center">
+            <p className="text-[#888899] mb-4">No simulations yet</p>
+            <button
+              onClick={() => setIsModalOpen(true)}
+              className="inline-block px-4 py-2 bg-[#1e40af] text-white rounded hover:bg-[#1e3a8a] transition-colors text-sm font-medium"
+            >
+              Launch Your First Simulation
+            </button>
+          </div>
+        )}
       </div>
+
+      {/* Scenario Picker Modal */}
+      <ScenarioPickerModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
     </div>
   )
 }
