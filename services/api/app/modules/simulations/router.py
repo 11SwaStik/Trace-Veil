@@ -50,6 +50,7 @@ async def create_simulation(
         attack_speed=body.attack_speed,
     )
     db.add(sim)
+    await db.flush()
     return sim
 
 
