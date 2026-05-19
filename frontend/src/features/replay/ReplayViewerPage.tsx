@@ -1,7 +1,7 @@
 import { useParams, useNavigate } from 'react-router-dom'
 import { useState, useMemo } from 'react'
 import { useQuery } from '@tanstack/react-query'
-import { TopologyDiagram } from '../../components/Topology/TopologyDiagram'
+import TopologyDiagram from '../../components/Topology/TopologyDiagram'
 import { EventTimeline } from '../../components/EventTimeline'
 import { AlertFeed } from '../../components/AlertFeed'
 import { ReplayControls } from '../../components/ReplayControls'

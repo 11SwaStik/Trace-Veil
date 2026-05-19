@@ -28,7 +28,7 @@ export type EventType =
 export type Severity = 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL'
 
 export const STATE_RING: Record<NodeState, { stroke: string; width: number; dash: number }> = {
-  healthy: { stroke: '#3DDBD9', width: 0, dash: 0 },
+  healthy: { stroke: '#3DDBD9', width: 1.5, dash: 0 },
   scanned: { stroke: '#3DDBD9', width: 1.5, dash: 4 },
   targeted: { stroke: '#E0A663', width: 2, dash: 0 },
   compromising: { stroke: '#E0A663', width: 2.5, dash: 0 },
@@ -39,14 +39,14 @@ export const STATE_RING: Record<NodeState, { stroke: string; width: number; dash
 }
 
 export const STATE_FILL: Record<NodeState, string> = {
-  healthy: '#0A0C10',
-  scanned: '#0A0C10',
-  targeted: '#0A0C10',
-  compromising: 'rgba(224, 166, 99, 0.15)',
-  compromised: 'rgba(229, 72, 77, 0.15)',
-  exfiltrating: 'rgba(181, 123, 211, 0.15)',
-  c2_beaconing: 'rgba(181, 123, 211, 0.1)',
-  isolated: 'rgba(152, 156, 164, 0.08)',
+  healthy: '#0A1F1D',
+  scanned: '#0A1F1D',
+  targeted: '#1A1410',
+  compromising: 'rgba(224, 166, 99, 0.25)',
+  compromised: 'rgba(229, 72, 77, 0.25)',
+  exfiltrating: 'rgba(181, 123, 211, 0.25)',
+  c2_beaconing: 'rgba(181, 123, 211, 0.15)',
+  isolated: 'rgba(152, 156, 164, 0.15)',
 }
 
 export const STATUS_TO_STATE: Record<string, NodeState> = {

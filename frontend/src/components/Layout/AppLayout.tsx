@@ -97,6 +97,7 @@ export function AppLayout() {
         <div style={{ flex: 1 }} />
 
         <div
+          id="integrity-pill"
           style={{
             display: 'flex',
             alignItems: 'center',
@@ -108,10 +109,11 @@ export function AppLayout() {
             fontFamily: 'var(--font-mono)',
             fontSize: '11px',
             color: 'var(--ink-2)',
+            transition: 'color 200ms',
           }}
         >
           <span style={{ color: 'var(--ink-3)', fontSize: '10px', textTransform: 'uppercase' }}>Integrity</span>
-          <span style={{ color: 'var(--ink-1)', fontWeight: 600 }}>100%</span>
+          <span id="integrity-val" style={{ color: 'var(--ink-1)', fontWeight: 600 }}>100%</span>
         </div>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontFamily: 'var(--font-mono)', fontSize: '11px', color: 'var(--ink-2)' }}>
@@ -267,11 +269,13 @@ export function AppLayout() {
           position: 'relative',
           overflow: 'hidden',
           isolation: 'isolate',
+          width: '100%',
+          height: '100%',
+          display: 'flex',
+          flexDirection: 'column',
         }}
       >
-        <div style={{ width: '100%', height: '100%' }}>
-          <Outlet />
-        </div>
+        <Outlet />
       </section>
 
       {/* INSPECTOR PANEL */}
@@ -285,42 +289,7 @@ export function AppLayout() {
           overflow: 'hidden',
         }}
       >
-        <div style={{ display: 'flex', borderBottom: '1px solid var(--line-1)' }}>
-          {['Story', 'Events', 'Alerts'].map((tab) => (
-            <button
-              key={tab}
-              style={{
-                flex: 1,
-                padding: '12px',
-                fontSize: '12px',
-                fontWeight: 500,
-                color: tab === 'Story' ? 'var(--ink-1)' : 'var(--ink-2)',
-                background: 'transparent',
-                border: 'none',
-                cursor: 'pointer',
-                position: 'relative',
-                transition: 'color 100ms',
-              }}
-            >
-              {tab}
-              {tab === 'Story' && (
-                <div
-                  style={{
-                    position: 'absolute',
-                    bottom: '-1px',
-                    left: '12px',
-                    right: '12px',
-                    height: '1.5px',
-                    background: 'var(--attack)',
-                  }}
-                />
-              )}
-            </button>
-          ))}
-        </div>
-        <div style={{ flex: 1, overflowY: 'auto', padding: '16px', color: 'var(--ink-3)' }}>
-          <p style={{ fontSize: '12px' }}>Inspector content goes here</p>
-        </div>
+        <div id="inspector-panel" style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }} />
       </aside>
 
       {/* TIMELINE TRAY */}
@@ -329,72 +298,12 @@ export function AppLayout() {
           gridArea: 'tl',
           background: 'var(--bg-1)',
           borderTop: '1px solid var(--line-1)',
-          display: 'grid',
-          gridTemplateRows: '30px 1fr 26px',
+          display: 'flex',
+          flexDirection: 'column',
+          overflow: 'hidden',
         }}
       >
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            padding: '0 16px',
-            borderBottom: '1px solid var(--line-1)',
-            gap: '10px',
-            fontSize: '11px',
-          }}
-        >
-          <div style={{ display: 'flex', gap: '2px' }}>
-            <button style={{ width: '20px', height: '20px', background: 'var(--bg-2)', border: '1px solid var(--line-2)', borderRadius: 'var(--radius-md)', cursor: 'pointer' }}>‹</button>
-            <button style={{ width: '20px', height: '20px', background: 'var(--bg-2)', border: '1px solid var(--line-2)', borderRadius: 'var(--radius-md)', cursor: 'pointer' }}>▶</button>
-            <button style={{ width: '20px', height: '20px', background: 'var(--bg-2)', border: '1px solid var(--line-2)', borderRadius: 'var(--radius-md)', cursor: 'pointer' }}>›</button>
-          </div>
-          <div style={{ fontFamily: 'var(--font-mono)', fontSize: '11.5px', color: 'var(--ink-1)' }}>
-            00:00.00 <span style={{ color: 'var(--ink-3)' }}>/ 00:42.00</span>
-          </div>
-          <button style={{ fontFamily: 'var(--font-mono)', fontSize: '11px', color: 'var(--ink-2)', background: 'var(--bg-2)', border: '1px solid var(--line-2)', borderRadius: 'var(--radius-sm)', padding: '2px 8px', cursor: 'pointer' }}>
-            1× speed
-          </button>
-          <div style={{ flex: 1 }} />
-          <div style={{ fontSize: '11px', color: 'var(--ink-3)' }}>
-            <strong style={{ color: 'var(--ink-1)' }}>0</strong> events · <strong style={{ color: 'var(--threat)' }}>0</strong> alerts · <strong style={{ color: 'var(--ink-1)' }}>0</strong> compromised
-          </div>
-        </div>
-        <div
-          style={{
-            position: 'relative',
-            padding: '0 16px',
-            overflow: 'hidden',
-            cursor: 'pointer',
-          }}
-        >
-          <div
-            style={{
-              position: 'absolute',
-              left: '16px',
-              right: '16px',
-              top: 'calc(50% - 1px)',
-              height: '2px',
-              background: 'var(--bg-3)',
-              borderRadius: '1px',
-            }}
-          />
-        </div>
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            padding: '0 16px',
-            borderTop: '1px solid var(--line-1)',
-            fontFamily: 'var(--font-mono)',
-            fontSize: '10px',
-            color: 'var(--ink-4)',
-            justifyContent: 'space-between',
-          }}
-        >
-          <span>T+00:00 · Recon</span>
-          <span>Idle — press play</span>
-          <span>T+00:42 · End</span>
-        </div>
+        <div id="timeline-tray" style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }} />
       </section>
     </div>
   )

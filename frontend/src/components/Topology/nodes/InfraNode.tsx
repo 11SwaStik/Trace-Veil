@@ -19,6 +19,7 @@ function getIcon(nodeType: string): string {
 
 interface InfraNodeProps {
   data: {
+    nodeId: string
     label: string
     nodeType: string
     ip: string
@@ -32,8 +33,8 @@ export function InfraNode({ data }: InfraNodeProps) {
   const vibrationRef = useRef<SVGGElement>(null)
   const c2IntervalRef = useRef<NodeJS.Timeout | null>(null)
 
-  const ringConfig = STATE_RING[data.state]
-  const fillColor = STATE_FILL[data.state]
+  const ringConfig = STATE_RING[data.state] || STATE_RING.healthy
+  const fillColor = STATE_FILL[data.state] || STATE_FILL.healthy
   const icon = getIcon(data.nodeType)
 
   useEffect(() => {
@@ -100,15 +101,17 @@ export function InfraNode({ data }: InfraNodeProps) {
 
   return (
     <div
+      data-id={data.nodeId}
       style={{
         width: '80px',
         height: '80px',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
+        position: 'relative',
       }}
     >
-      <svg width="80" height="80" viewBox="0 0 80 80" style={{ overflow: 'visible' }}>
+      <svg width="80" height="80" viewBox="0 0 80 80" style={{ overflow: 'visible', position: 'absolute' }}>
         <g ref={vibrationRef} style={{ transition: 'none' }}>
           <defs>
             <filter id={`glow-${data.label}`} x="-50%" y="-50%" width="200%" height="200%">

@@ -193,3 +193,5 @@ function getNodeZone(nodeType: string): 'perimeter' | 'app' | 'data' {
   }
   return zoneMap[nodeType] || 'app'
 }
+
+export const useSimStore = useSimulationStore
