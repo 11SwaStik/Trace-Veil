@@ -1,7 +1,6 @@
 import { useMemo } from 'react'
 import {
   ReactFlow,
-  ReactFlowProvider,
   Background,
   type Node,
   type Edge,
@@ -55,6 +54,7 @@ function TopologyInner() {
       return {
         id: node.id,
         data: {
+          nodeId: node.id,
           label: node.label,
           nodeType: node.type,
           ip: node.ip,
@@ -89,7 +89,9 @@ function TopologyInner() {
       nodeTypes={nodeTypes}
       edgeTypes={edgeTypes}
       fitView
-      style={{ background: 'var(--bg-0)' }}
+      style={{ background: 'var(--bg-0)', width: '100%', height: '100%' }}
+      onNodesChange={() => {}}
+      onEdgesChange={() => {}}
     >
       <Background color="var(--line-1)" gap={28} size={1} />
     </ReactFlow>
@@ -102,12 +104,12 @@ interface TopologyDiagramProps {
   animatingEdges?: Record<string, { sourceId: string; targetId: string; severity: string }>
 }
 
-export function TopologyDiagram(_props?: TopologyDiagramProps) {
+function TopologyDiagramComponent(_props?: TopologyDiagramProps) {
   return (
-    <ReactFlowProvider>
-      <div style={{ width: '100%', height: '100%', background: 'var(--bg-0)' }}>
-        <TopologyInner />
-      </div>
-    </ReactFlowProvider>
+    <div style={{ width: '100%', height: '100%', background: 'var(--bg-0)' }}>
+      <TopologyInner />
+    </div>
   )
 }
+
+export default TopologyDiagramComponent
