@@ -82,3 +82,12 @@ export interface Alert {
   created_at: string
   acknowledged: boolean
 }
+
+export interface Replay {
+  id: string
+  simulation_id: string
+  name: string
+  total_events: number
+  duration_ms: number
+  created_at: string
+}

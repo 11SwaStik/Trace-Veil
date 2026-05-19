@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { useAuthStore } from '../../store/authStore'
-import { SignOut, Clock, Warning, House } from 'phosphor-react'
+import { SignOut, Clock, Warning, House, FilmSlate } from 'phosphor-react'
 
 interface AppLayoutProps {
   children: React.ReactNode
@@ -28,6 +28,7 @@ export function AppLayout({ children }: AppLayoutProps) {
   const navItems = [
     { path: '/dashboard', label: 'Dashboard', icon: House },
     { path: '/history', label: 'History', icon: Clock },
+    { path: '/replays', label: 'Replays', icon: FilmSlate },
     { path: '/alerts', label: 'Alerts', icon: Warning },
   ]
 

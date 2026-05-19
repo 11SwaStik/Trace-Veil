@@ -10,6 +10,7 @@ import { SimulationViewPage } from './features/simulation/SimulationViewPage'
 import { SimulationHistoryPage } from './features/history/SimulationHistoryPage'
 import { AlertsPage } from './features/alerts/AlertsPage'
 import { ReplayViewerPage } from './features/replay/ReplayViewerPage'
+import { ReplayLibraryPage } from './features/replay/ReplayLibraryPage'
 import { AppLayout } from './components/Layout/AppLayout'
 import { ProtectedRoute } from './components/Layout/ProtectedRoute'
 
@@ -121,6 +122,16 @@ function App() {
             <ProtectedRoute>
               <AppLayout>
                 <AlertsPage />
+              </AppLayout>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/replays"
+          element={
+            <ProtectedRoute>
+              <AppLayout>
+                <ReplayLibraryPage />
               </AppLayout>
             </ProtectedRoute>
           }
