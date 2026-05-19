@@ -54,6 +54,7 @@ async def register(
         )
     user = User(email=body.email, password_hash=_hash(body.password))
     db.add(user)
+    await db.flush()
     return user
 
 
@@ -73,6 +74,7 @@ async def login(
         )
 
     user.last_login = datetime.now(timezone.utc)
+    await db.flush()
 
     return TokenResponse(
         access_token=_make_token(

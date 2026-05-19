@@ -84,6 +84,12 @@ async def get_session() -> AsyncIterator[AsyncSession]:
             ...
 
     Commits on a clean return, rolls back if the route raises.
+
+    Critical: Any ORM objects returned must be flushed before return:
+        obj = MyModel(...)
+        db.add(obj)
+        await db.flush()  # ← Required to populate auto-generated fields
+        return obj
     """
     async with SessionLocal() as session:
         try:

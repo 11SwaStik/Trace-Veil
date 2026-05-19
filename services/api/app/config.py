@@ -49,12 +49,21 @@ class Settings:
     port: int = _env_int("PORT", 8000)
 
     # --- Database ---
+    # Default points to localhost:5432 for local development (when running API outside Docker).
+    # When running via docker-compose, DATABASE_URL env var is overridden to use 'postgres:5432'
+    # (internal Docker network) and the postgres service ports 5434:5432 (host:container).
+    # So from the host machine: postgres is at localhost:5434
+    # But from inside a container: postgres is at postgres:5432
     database_url: str = os.getenv(
         "DATABASE_URL",
         "postgresql+asyncpg://traceveil:traceveil@localhost:5432/traceveil",
     )
 
     # --- CORS ---
+    # Allowed frontend origins. Update if frontend runs on a different port.
+    # 5173: Vite default (npm run dev)
+    # 3000: Next.js default
+    # In production, set CORS_ORIGINS env var to your actual domain.
     cors_origins: list[str] = field(
         default_factory=lambda: _env_list(
             "CORS_ORIGINS",
