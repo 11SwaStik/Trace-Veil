@@ -1,10 +1,11 @@
-import { Outlet, Link, useLocation } from 'react-router-dom'
+import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom'
 import { useAuthStore } from '../../store/authStore'
-import { Clock, Warning, House, FilmSlate, GearSix } from 'phosphor-react'
+import { Clock, Warning, House, FilmSlate, GearSix, SignOut } from 'phosphor-react'
 
 export function AppLayout() {
-  const { user } = useAuthStore()
+  const { user, logout } = useAuthStore()
   const location = useLocation()
+  const navigate = useNavigate()
 
   const isActive = (path: string) => {
     return location.pathname === path || location.pathname.startsWith(path + '/')
@@ -232,32 +233,64 @@ export function AppLayout() {
             padding: '10px 8px 4px',
             borderTop: '1px solid var(--line-1)',
             display: 'flex',
-            alignItems: 'center',
+            flexDirection: 'column',
             gap: '8px',
             fontSize: '11px',
             color: 'var(--ink-3)',
           }}
         >
-          <div
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <div
+              style={{
+                width: '22px',
+                height: '22px',
+                borderRadius: '4px',
+                background: 'var(--bg-3)',
+                color: 'var(--ink-1)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: '10px',
+                fontWeight: 600,
+              }}
+            >
+              {userInitial}
+            </div>
+            <div>
+              <div style={{ color: 'var(--ink-1)', fontSize: '12px' }}>{username}</div>
+              <div style={{ fontSize: '10px' }}>Analyst</div>
+            </div>
+          </div>
+          <button
+            onClick={() => {
+              logout()
+              navigate('/login')
+            }}
             style={{
-              width: '22px',
-              height: '22px',
-              borderRadius: '4px',
-              background: 'var(--bg-3)',
-              color: 'var(--ink-1)',
               display: 'flex',
               alignItems: 'center',
-              justifyContent: 'center',
-              fontSize: '10px',
-              fontWeight: 600,
+              gap: '6px',
+              padding: '6px 8px',
+              background: 'var(--bg-2)',
+              border: '1px solid var(--line-2)',
+              borderRadius: 'var(--radius-sm)',
+              color: 'var(--ink-2)',
+              fontSize: '11px',
+              cursor: 'pointer',
+              transition: 'background 100ms, color 100ms',
+            }}
+            onMouseEnter={(e) => {
+              ;(e.target as HTMLElement).style.background = 'var(--bg-3)'
+              ;(e.target as HTMLElement).style.color = 'var(--ink-1)'
+            }}
+            onMouseLeave={(e) => {
+              ;(e.target as HTMLElement).style.background = 'var(--bg-2)'
+              ;(e.target as HTMLElement).style.color = 'var(--ink-2)'
             }}
           >
-            {userInitial}
-          </div>
-          <div>
-            <div style={{ color: 'var(--ink-1)', fontSize: '12px' }}>{username}</div>
-            <div style={{ fontSize: '10px' }}>Analyst</div>
-          </div>
+            <SignOut size={12} weight="bold" />
+            Logout
+          </button>
         </div>
       </nav>
 
